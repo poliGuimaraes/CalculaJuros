@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +14,7 @@ namespace CalculaJuros.Controllers
     public class CalculaJurosController : ControllerBase
     {
       
-
+        
         private readonly ILogger<CalculaJurosController> _logger;
 
         public CalculaJurosController(ILogger<CalculaJurosController> logger)
@@ -22,19 +24,29 @@ namespace CalculaJuros.Controllers
 
      
         [HttpGet("/CalculaJuros")]
-        public IEnumerable<CalculaJurosResponse> CalculaJuros(
+        public  IEnumerable<CalculaJurosResponse> CalculaJuros(
         int valorinicial,
         int meses)
         {
-            var juros = valorinicial * 0.01;
+            var json = "";
+            using (WebClient wc = new WebClient())
+            {
+                 json = wc.DownloadString("https://localhost:5002/TaxasDeJuros");
+                
+            }
+        
+            int objTaxa = JsonSerializer.Deserialize<int>(json);
+            
+            var juros = objTaxa;
 
-            int valorFinal = Convert.ToInt32(valorinicial + juros * meses);
+            int valorFinal = valorinicial + juros * meses;
 
             return Enumerable.Range(1, 1).Select(index => new CalculaJurosResponse
             {
-               result = valorFinal.ToString("00.00")
+            result = valorFinal.ToString("00.00")
             })
             .ToArray();
+           
         }
        
         [HttpGet("/ShowMethECode")]
@@ -48,5 +60,6 @@ namespace CalculaJuros.Controllers
             })
             .ToArray();
         }
+
     }
 }
