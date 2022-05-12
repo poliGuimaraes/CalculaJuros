@@ -25,7 +25,7 @@ namespace CalculaJuros.Controllers
      
         [HttpGet("/CalculaJuros")]
         public  IEnumerable<CalculaJurosResponse> CalculaJuros(
-        int valorinicial,
+        decimal valorinicial,
         int meses)
         {
             var json = "";
@@ -35,15 +35,15 @@ namespace CalculaJuros.Controllers
                 
             }
         
-            int objTaxa = JsonSerializer.Deserialize<int>(json);
+            decimal objTaxa = JsonSerializer.Deserialize<decimal>(json);
             
-            var juros = objTaxa;
+            var juros = objTaxa * valorinicial;
 
-            int valorFinal = valorinicial + juros * meses;
+            decimal valorFinal = juros * meses + valorinicial;
 
             return Enumerable.Range(1, 1).Select(index => new CalculaJurosResponse
             {
-            result = valorFinal.ToString("00.00")
+                result = valorFinal
             })
             .ToArray();
            

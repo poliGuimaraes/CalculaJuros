@@ -5,6 +5,6 @@ namespace CalculaJuros
     public class CalculaJurosResponse
     {
 
-        public string result  { get; set; }
+        public decimal result  { get; set; }
     }
 }
